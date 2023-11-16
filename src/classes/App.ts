@@ -90,7 +90,7 @@ export class App {
   private newWorkout(e: Event) {
     e.preventDefault();
 
-    console.log(this)
+    // console.log(this)
 
     // clear inputs
     $inputDistance.value = $inputDuration.value = $inputCadence.value = $inputElevation.value = '';
