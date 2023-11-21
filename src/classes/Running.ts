@@ -2,10 +2,11 @@
 import { Workout } from './Workout';
 
 
-class Running extends Workout {
+export class Running extends Workout {
 
   public cadence: number;
   public pace: number = 0;
+  type: string = 'running';
 
   constructor(coords: number[], distance: number, duration: number, cadence: number){
     super(coords, distance, duration);

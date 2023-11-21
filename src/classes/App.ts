@@ -1,11 +1,16 @@
 import * as L from 'leaflet';
+import { validInputs, validatePositiveNumber } from '../helpers';
+import { Running } from './Running';
+import { Cycling } from './Cycling';
+import { Workout } from './Workout';
+// import { Workout } from './Workout';
 
 const d = document;
 
 const $form = d.querySelector('.form')!,
       $inputDistance = d.querySelector('.form__input--distance') as HTMLInputElement,
-      // $containerWorkouts = d.querySelector('.workouts')!,
-      $inputType = d.querySelector('.form__input--type')!,
+      $containerWorkouts = d.querySelector('.workouts')!,
+      $inputType = d.querySelector('.form__input--type') as HTMLSelectElement,
       $inputDuration = d.querySelector('.form__input--duration') as HTMLInputElement,
       $inputCadence = d.querySelector('.form__input--cadence') as HTMLInputElement,
       $inputElevation = d.querySelector('.form__input--elevation') as HTMLInputElement;
@@ -32,6 +37,7 @@ export class App {
 
   private map!: L.Map;
   private mapEvent!: L.LeafletMouseEvent;
+  private workouts: Workout[] = [];
 
   constructor() {
     this.getPosition();
@@ -77,7 +83,7 @@ export class App {
   private showForm(mapE: L.LeafletMouseEvent): void {
     this.mapEvent = mapE;
     $form.classList.remove('hidden');
-    $inputDistance.focus();
+    // $inputDistance.focus();
   }
 
   //
@@ -90,26 +96,73 @@ export class App {
   private newWorkout(e: Event) {
     e.preventDefault();
 
-    // console.log(this)
+    // data from form
+    const type = $inputType.value;
+    const distance = Number($inputDistance.value);
+    const duration = Number($inputDuration.value);
+    const { lat, lng } = this.mapEvent.latlng;
+    let workout!: Running | Cycling;
+
+    // if type is 'running'
+    if(type === 'running'){
+      const cadence = Number($inputCadence.value);
+
+      // validation
+      if (
+        !validInputs(distance, duration, cadence) ||
+        !validatePositiveNumber(distance, duration, cadence)
+      ) {
+        return alert('Ingrese solo números positivos');
+      }
+      
+      workout = new Running([lat, lng], distance, duration, cadence);
+      
+    }
+
+    // if type is 'cycling'
+    if(type === 'cycling'){
+      const elevation = Number($inputElevation.value);
+
+      // validation
+      if (
+        !validInputs(distance, duration, elevation) ||
+        !validatePositiveNumber(distance, duration)
+      ) {
+        return alert('Ingrese solo números positivos');
+      }
+      workout = new Cycling([lat, lng], distance, duration, elevation);
+    }
+
+    // Add new object to workout array
+    this.workouts.push( workout );
+    console.log(workout)
+
+    // show workout on the map as marker
+    this.renderWorkoutMarker(workout)
+    
+    // show workout on list
+
 
     // clear inputs
     $inputDistance.value = $inputDuration.value = $inputCadence.value = $inputElevation.value = '';
-  
-    // display marker
-    const { lat, lng } = this.mapEvent.latlng;
-  
-    L.marker([lat, lng])
+  }
+
+  //
+  renderWorkoutMarker(workout: Running | Cycling){
+    
+    L.marker({ lat: workout.coords[0], lng: workout.coords[1] })
       .addTo(this.map)
       .bindPopup(L.popup({ 
         maxWidth: 250, 
         minWidth: 100,
         autoClose: false ,
         closeOnClick: false,
-        className: 'running-popup'
+        className: `${workout.type}-popup`
       }))
-      .setPopupContent('Workout')
+      .setPopupContent('Ejercicio')
       .openPopup();
   }
+    
 }
 
 export const app = new App();
