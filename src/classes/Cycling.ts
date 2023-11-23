@@ -6,12 +6,13 @@ export class Cycling extends Workout {
 
   public elevationGain: number;
   public speed: number = 0;
-  type: string = 'cycling';
+  type: string = 'bicicleta';
 
   constructor(coords: number[], distance: number, duration: number, elevationGain: number){
     super(coords, distance, duration);
     this.elevationGain = elevationGain;
     this.calculateSpeed();
+    this.setDescription();
   }
 
   calculateSpeed(){

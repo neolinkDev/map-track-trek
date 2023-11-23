@@ -7,7 +7,7 @@ import { Workout } from './Workout';
 
 const d = document;
 
-const $form = d.querySelector('.form')!,
+const $form = d.querySelector('.form') as HTMLFormElement,
       $inputDistance = d.querySelector('.form__input--distance') as HTMLInputElement,
       $containerWorkouts = d.querySelector('.workouts')!,
       $inputType = d.querySelector('.form__input--type') as HTMLSelectElement,
@@ -87,6 +87,19 @@ export class App {
   }
 
   //
+  private hideForm(){
+
+    // clear inputs
+    $inputDistance.value = $inputDuration.value = $inputCadence.value = $inputElevation.value = '';
+    $form.style.display = 'none';
+    $form.classList.add('hidden');
+
+    setTimeout(() => {
+      $form.style.display = "grid";
+    }, 1000);
+  }
+
+  //
   private toggleElevationField(): void {
     $inputCadence.closest('.form__row')?.classList.toggle('form__row--hidden');
     $inputElevation.closest('.form__row')?.classList.toggle('form__row--hidden');
@@ -141,14 +154,14 @@ export class App {
     this.renderWorkoutMarker(workout)
     
     // show workout on list
+    this.renderWorkout(workout);
 
-
-    // clear inputs
-    $inputDistance.value = $inputDuration.value = $inputCadence.value = $inputElevation.value = '';
+    // clear inputs & hide form
+    this.hideForm()
   }
 
   //
-  renderWorkoutMarker(workout: Running | Cycling){
+  private renderWorkoutMarker(workout: Running | Cycling){
     
     L.marker({ lat: workout.coords[0], lng: workout.coords[1] })
       .addTo(this.map)
@@ -159,8 +172,72 @@ export class App {
         closeOnClick: false,
         className: `${workout.type}-popup`
       }))
-      .setPopupContent('Ejercicio')
+      .setPopupContent(`${workout.type === 'corriste' ? '🏃' : '🚴' } ${workout.description}`)
       .openPopup();
+  }
+
+  //
+  private renderWorkout(workout: Running | Cycling){
+
+    let renderHTML = `
+      <li class="workout workout--${ workout.type }" data-id=${ workout.id }>
+        <h2 class="workout__title">${ workout.description }</h2>
+        <div class="workout__details">
+          <span class="workout__icon">${ workout.type === 'corriste' ? '🏃' : '🚴' }</span>
+          <span class="workout__value">${ workout.distance }</span>
+          <span class="workout__unit">km</span>
+        </div>
+        <div class="workout__details">
+          <span class="workout__icon">⏱</span>
+          <span class="workout__value">${ workout.duration }</span>
+          <span class="workout__unit">min</span>
+        </div>
+    `;
+
+    if(workout.type === 'corriste'){
+
+      // Type check to ensure that 'workout' is of type 'Running'
+      // Verificación de tipo para asegurarse de que 'workout' es de tipo 'Running'
+      const runningWorkout = workout as Running;
+
+      renderHTML += `
+        <div class="workout__details">
+          <span class="workout__icon">⚡️</span>
+          <span class="workout__value">${runningWorkout.pace.toFixed(1)}</span>
+          <span class="workout__unit">min/km</span>
+        </div>
+        <div class="workout__details">
+          <span class="workout__icon">🦶🏼</span>
+          <span class="workout__value">${runningWorkout.cadence}</span>
+          <span class="workout__unit">ppm</span>
+        </div>
+      </li>
+      `;
+      
+    }
+
+    if(workout.type === 'bicicleta'){
+
+      const cyclingWorkout = workout as Cycling;
+
+      const { speed, elevationGain } = cyclingWorkout;
+
+      renderHTML += `
+        <div class="workout__details">
+          <span class="workout__icon">⚡️</span>
+          <span class="workout__value">${ speed.toFixed(1) }</span>
+          <span class="workout__unit">km/h</span>
+        </div>
+        <div class="workout__details">
+          <span class="workout__icon">⛰</span>
+          <span class="workout__value">${ elevationGain }</span>
+          <span class="workout__unit">m</span>
+        </div>
+      </li>
+      `;
+
+    }
+    $form.insertAdjacentHTML('afterend', renderHTML)
   }
     
 }
