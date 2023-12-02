@@ -8,9 +8,7 @@ const d = document;
 
 const $form = d.querySelector('.form') as HTMLFormElement,
       $inputDistance = d.querySelector('.form__input--distance') as HTMLInputElement,
-      $
-      
-      = d.querySelector('.workouts') as HTMLUListElement,
+      $containerWorkouts = d.querySelector('.workouts') as HTMLUListElement,
       $inputType = d.querySelector('.form__input--type') as HTMLSelectElement,
       $inputDuration = d.querySelector('.form__input--duration') as HTMLInputElement,
       $inputCadence = d.querySelector('.form__input--cadence') as HTMLInputElement,
@@ -49,9 +47,7 @@ export class App {
 
     $form.addEventListener('submit', (e) => this.newWorkout(e));
     $inputType.addEventListener('change', this.toggleElevationField);
-    $
-    
-    .addEventListener('click', (e) => this.moveToPopup(e));
+    $containerWorkouts.addEventListener('click', (e) => this.moveToPopup(e));
   }
 
   //
