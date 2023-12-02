@@ -7,6 +7,7 @@ export class Workout {
   public duration: number;
   public description!: string;
   public type!: string;
+  // public clicks: number = 0;
   
 
   private date: Date = new Date();
@@ -22,8 +23,12 @@ export class Workout {
 
     this.description = `
       ${this.type[0].toUpperCase()}${this.type.slice(1)} el ${ this.formatDate( this.date)}
-    `
+    `;
   }
+  
+  // click(){
+  //   this.clicks++
+  // }
 
   private formatDate = (date: Date): string => {
     const newDate = new Date(date);
