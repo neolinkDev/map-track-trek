@@ -1,7 +1,6 @@
 
 import { Workout } from './Workout';
 
-
 export class Running extends Workout {
 
   public cadence: number;

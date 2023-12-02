@@ -1,8 +1,6 @@
 import * as L from 'leaflet';
 import { validInputs, validatePositiveNumber } from '../helpers';
-import { Running } from './Running';
-import { Cycling } from './Cycling';
-import { Workout } from './Workout';
+import { Workout, Running, Cycling } from '.';
 
 const d = document;
 
@@ -259,13 +257,11 @@ export class App {
   private moveToPopup(e: Event) {
     const workoutElement = (e.target as HTMLLIElement).closest('.workout');
     if (!workoutElement) return;
-    // console.log(workoutElement);
 
     const workoutID = workoutElement.getAttribute('data-id');
     if (!workoutID) return;
 
     const workout = this.workouts.find((work) => work.id === workoutID);
-    // console.log(workout?.coords);
 
     let latlng = L.latLng(workout!.coords[0], workout!.coords[1]);
 
@@ -283,7 +279,6 @@ export class App {
     const data = localStorage.getItem('workouts') ?? '[]';
     const parsedData: Workout[] = JSON.parse(data);
     this.workouts = parsedData;
-    // console.log(parsedData)
 
     // Type check for Running and Cycling workout classes to render their respective workouts
     this.workouts.forEach((workout) => {

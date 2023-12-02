@@ -7,9 +7,7 @@ export class Workout {
   public duration: number;
   public description!: string;
   public type!: string;
-  // public clicks: number = 0;
   
-
   private date: Date = new Date();
   public id: string = crypto.randomUUID();
 
@@ -26,10 +24,6 @@ export class Workout {
     `;
   }
   
-  // click(){
-  //   this.clicks++
-  // }
-
   private formatDate = (date: Date): string => {
     const newDate = new Date(date);
   

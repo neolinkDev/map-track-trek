@@ -1,7 +1,6 @@
 
 import { Workout } from './Workout';
 
-
 export class Cycling extends Workout {
 
   public elevationGain: number;
