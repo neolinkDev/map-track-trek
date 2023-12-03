@@ -10,7 +10,8 @@ const $form = d.querySelector('.form') as HTMLFormElement,
       $inputType = d.querySelector('.form__input--type') as HTMLSelectElement,
       $inputDuration = d.querySelector('.form__input--duration') as HTMLInputElement,
       $inputCadence = d.querySelector('.form__input--cadence') as HTMLInputElement,
-      $inputElevation = d.querySelector('.form__input--elevation') as HTMLInputElement;
+      $inputElevation = d.querySelector('.form__input--elevation') as HTMLInputElement,
+      $btnClear = d.querySelector('.btn') as HTMLButtonElement;
 
 // Definición de tipos para la API de geolocalización
 // definition types for the geolocation API
@@ -46,6 +47,7 @@ export class App {
     $form.addEventListener('submit', (e) => this.newWorkout(e));
     $inputType.addEventListener('change', this.toggleElevationField);
     $containerWorkouts.addEventListener('click', (e) => this.moveToPopup(e));
+    $btnClear.addEventListener('click', () => this.reset());
   }
 
   //
@@ -251,6 +253,10 @@ export class App {
       `;
     }
     $form.insertAdjacentHTML('afterend', renderHTML);
+
+    if (this.workouts.length > 0) {
+      $btnClear.classList.remove('btn-hidden');
+    }
   }
 
   // moves the map by clicking on the workout container
@@ -284,6 +290,16 @@ export class App {
     this.workouts.forEach((workout) => {
       this.renderWorkout(workout);
     });
+  }
+
+  //
+  private reset(){
+    
+    this.workouts = [];
+    localStorage.removeItem('workouts');
+    $btnClear.classList.add('btn-hidden');
+    location.reload();
+ 
   }
 }
 
